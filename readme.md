@@ -1,3 +1,5 @@
+[![](https://jitpack.io/v/Tyzar/mantra-compose-paging.svg)](https://jitpack.io/#Tyzar/mantra-compose-paging)
+
 # Mantra Compose Paging
 
 Reduces boilerplate when writing pagination code on Jetpack Compose components.
