@@ -334,7 +334,7 @@ MtrVerticalGridPagin(modifier = modifier, columns = GridCells.Fixed(2), onReques
 
 #### Where to Put Paging Controller?
 
-Paging controller can be hoisted at ViewModels and expose its state from there. This approach will
+Paging controller can be stored at ViewModels and expose its state from there. This approach will
 ensure the value of paging state will not be reset after configuration changes happened on device.
 More over, it follows best practice to modular architecture. The other reason is because
 pagination strongly relates to how repository or datasource layer fetch the data.
@@ -345,5 +345,5 @@ state.
 
 ### Full Example Code
 
-In the example code, we hoist page controller in `ViewModels`. Full code can be read at `app` module
+In the example code, we store page controller in `ViewModels`. Full code can be read at `app` module
 of this project. 
