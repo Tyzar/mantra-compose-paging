@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+    `maven-publish`
 }
 
 android {
@@ -25,6 +26,12 @@ android {
             libs.versions.kotlinCompilerExtensionVersion.get()
     }
 
+    publishing {
+        singleVariant("release"){
+            withSourcesJar()
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -42,6 +49,20 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+}
+
+publishing{
+    publications {
+        register<MavenPublication>("release"){
+            groupId = "com.nokotogi"
+            artifactId = "mantra-compose-paging"
+            version = "1.0.0-alpha"
+
+            afterEvaluate {
+                from(components["release"])
+            }
+        }
     }
 }
 
