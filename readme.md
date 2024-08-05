@@ -340,8 +340,8 @@ More over, it follows best practice to modular architecture. The other reason is
 pagination strongly relates to how repository or datasource layer fetch the data.
 
 Another approach by using `remember` function and `state` inside composable, currently not
-supported. Maybe in the next version, we can make a proper way to make paging controller and paging
-state.
+supported. Maybe in the next version, we can make a proper way to adapt paging controller and paging
+state using that approach.
 
 ### Full Example Code
 
