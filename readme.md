@@ -46,7 +46,7 @@ compileOptions {
 In module level `build.gradle.kts`, add dependency as below
 
 ```
-implementation(com.github.Tyzar.mantra-compose-paging:1.0.0-alpha)
+implementation(com.github.Tyzar.mantra-compose-paging:1.0.1-alpha)
 
 ```
 
