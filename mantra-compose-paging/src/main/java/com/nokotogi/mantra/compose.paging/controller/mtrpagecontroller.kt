@@ -24,7 +24,12 @@ class MtrPageController<Error, Data>(
         if (pageData.isEmpty()) {
             mState.value = mState.value.copy(
                 isPageEnded = pageData.size < mState.value.pageSize,
-                pageResult = PageResult.Loaded(pageData)
+                pageResult = PageResult.Loaded(pageData),
+                pageKey = setNextPageFunc(
+                    mState.value.pageKey,
+                    mState.value.pageSize,
+                    pageData.size
+                )
             )
             return
         }
@@ -36,7 +41,7 @@ class MtrPageController<Error, Data>(
             dataset = mDataset,
             isPageEnded = pageData.size < mState.value.pageSize,
             pageResult = PageResult.Loaded(pageData),
-            pageKey = setNextPageFunc(mState.value.pageKey, mState.value.pageSize, pageData.size),
+            pageKey = setNextPageFunc(mState.value.pageKey, mState.value.pageSize, pageData.size)
         )
     }
 
