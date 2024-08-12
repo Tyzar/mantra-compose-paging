@@ -57,7 +57,7 @@ publishing{
         register<MavenPublication>("release"){
             groupId = "com.nokotogi"
             artifactId = "mantra-compose-paging"
-            version = "1.0.2-alpha"
+            version = "1.0.3-alpha"
 
             afterEvaluate {
                 from(components["release"])
