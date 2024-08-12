@@ -11,7 +11,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-
 data class PaginItem(val id: Int, val name: String, val desc: String)
 
 class PaginVM : ViewModel() {
@@ -22,12 +21,12 @@ class PaginVM : ViewModel() {
     private val pageController =
         MtrPageController(
             MtrPageState(),
-            setNextPageFunc = { currKey, pageSize, _ ->
-                (currKey ?: 1) + pageSize
-            }) { pageKey, pageSize ->
+            setNextPageFunc = { currKey, lastResultSize ->
+                (currKey ?: 1) + lastResultSize
+            }) { pageKey ->
             withContext(Dispatchers.IO) {
                 delay(3000)
-                return@withContext getPaginatedData((pageKey ?: 1), pageSize).fold(
+                return@withContext getPaginatedData((pageKey ?: 1), 20).fold(
                     onLeft = {
                         PageResult.Error("Failed to get pagin data")
                     }, onRight = {
@@ -53,10 +52,14 @@ class PaginVM : ViewModel() {
             pageController.refreshPage()
         }
     }
+
+    fun setPagingEnd() {
+        pageController.setEndOfPage()
+    }
 }
 
 fun getPaginatedData(pageKey: Int, resultSize: Int): Either<Exception, List<PaginItem>> {
-    if (pageKey > 60) {
+    if (pageKey > 100) {
         //test set pagin error
         return getPaginatedDataError(pageKey, resultSize)
     }

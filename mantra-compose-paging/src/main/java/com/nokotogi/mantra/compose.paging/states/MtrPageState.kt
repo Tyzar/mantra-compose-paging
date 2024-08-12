@@ -1,7 +1,6 @@
 package com.nokotogi.mantra.compose.paging.states
 
 data class MtrPageState<Error, Data>(
-    val pageSize: Int = 20,
     val pageKey: Int? = null,
     val isPageEnded: Boolean = false,
     val pageResult: PageResult<Error, List<Data>> = PageResult.Initial(),
