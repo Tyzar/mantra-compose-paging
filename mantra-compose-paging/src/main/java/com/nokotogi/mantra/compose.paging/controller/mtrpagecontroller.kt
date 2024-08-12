@@ -5,12 +5,12 @@ import com.nokotogi.mantra.compose.paging.states.PageResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-typealias SetNextPageFunc = (pageKey: Int?, pageSize: Int, lastResultSize: Int) -> Int?
+typealias SetNextPageFunc = (pageKey: Int?, lastResultSize: Int) -> Int?
 
 class MtrPageController<Error, Data>(
     state: MtrPageState<Error, Data>,
     private val setNextPageFunc: SetNextPageFunc,
-    private val loadPageFunc: suspend (pageKey: Int?, pageSize: Int) -> PageResult<Error, List<Data>>
+    private val loadPageFunc: suspend (pageKey: Int?) -> PageResult<Error, List<Data>>
 ) {
     companion object {
         const val TAG = "TestPaging"
@@ -23,11 +23,9 @@ class MtrPageController<Error, Data>(
     private fun appendPage(pageData: List<Data>) {
         if (pageData.isEmpty()) {
             mState.value = mState.value.copy(
-                isPageEnded = pageData.size < mState.value.pageSize,
                 pageResult = PageResult.Loaded(pageData),
                 pageKey = setNextPageFunc(
                     mState.value.pageKey,
-                    mState.value.pageSize,
                     pageData.size
                 )
             )
@@ -39,9 +37,8 @@ class MtrPageController<Error, Data>(
 
         mState.value = mState.value.copy(
             dataset = mDataset,
-            isPageEnded = pageData.size < mState.value.pageSize,
             pageResult = PageResult.Loaded(pageData),
-            pageKey = setNextPageFunc(mState.value.pageKey, mState.value.pageSize, pageData.size)
+            pageKey = setNextPageFunc(mState.value.pageKey, pageData.size)
         )
     }
 
@@ -56,10 +53,14 @@ class MtrPageController<Error, Data>(
             return
         }
 
+        if (mState.value.isPageEnded) {
+            return
+        }
+
         mState.value = mState.value.copy(
             pageResult = PageResult.Loading()
         )
-        when (val pageResult = loadPageFunc(mState.value.pageKey, mState.value.pageSize)) {
+        when (val pageResult = loadPageFunc(mState.value.pageKey)) {
             is PageResult.Error -> notifyLoadError(pageResult.error)
 
             is PageResult.Loaded -> appendPage(pageResult.pageData)
@@ -76,6 +77,12 @@ class MtrPageController<Error, Data>(
         )
 
         loadPage()
+    }
+
+    fun setEndOfPage() {
+        mState.value = mState.value.copy(
+            isPageEnded = true
+        )
     }
 }
 

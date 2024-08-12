@@ -29,6 +29,15 @@ fun GridPaginScreen(modifier: Modifier = Modifier, paginVM: PaginVM) {
     MtrVerticalGridPagin(modifier = modifier, columns = GridCells.Fixed(2), onRequestLoadNewPage = {
         paginVM.loadPaging()
     }) {
+        item(span = { GridItemSpan(2) }) {
+            ElevatedButton(
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.large,
+                onClick = { paginVM.setPagingEnd() }) {
+                Text(text = "Set Paging End")
+            }
+        }
+
         val dataset = paginState.dataset
         if (dataset.isNotEmpty()) {
             items(count = dataset.size, key = { dataset[it].id }) {
@@ -62,8 +71,8 @@ fun GridPaginScreen(modifier: Modifier = Modifier, paginVM: PaginVM) {
                 ) {
                     Text(text = paginState.pageResult.error ?: "An error is occurred")
                     Spacer(modifier = Modifier.height(16.dp))
-                    ElevatedButton(onClick = { paginVM.refresh() }) {
-                        Text(text = "Refresh")
+                    ElevatedButton(onClick = { paginVM.loadPaging() }) {
+                        Text(text = "Reload")
                     }
                 }
             }
