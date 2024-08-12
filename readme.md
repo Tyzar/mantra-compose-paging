@@ -46,7 +46,7 @@ compileOptions {
 In module level `build.gradle.kts`, add dependency as below
 
 ```
-implementation(com.github.Tyzar.mantra-compose-paging:1.0.1-alpha)
+implementation(com.github.Tyzar.mantra-compose-paging:1.0.3-alpha)
 
 ```
 
@@ -106,21 +106,19 @@ For example `MtrPageState<String,Book>` will return fetching error result as Str
 stored as `List<Book>`.
 For another properties at `MtrPageState`, explained as below.
 
-`pageSize`: how many data can be fetched at one page request.
+- `pageKey`: Current key of the page.
 
-`pageKey`: Current key of the page.
+- `isPageEnded`: Indicates if last page has been loaded.
 
-`isPageEnded`: Indicates if last page has been loaded.
-
-`pageResult`: The result status of currently or last fetching page process. Represented
+- `pageResult`: The result status of currently or last fetching page process. Represented
 by `PageResult<Error,Data>` The result can
 be `Initial`, `Loading`, `Error`, and `Loaded`.
 
-`dataset`: The dataset of paging. Use this dataset to describe item components in paging component.
+- `dataset`: The dataset of paging. Use this dataset to describe item components in paging component.
 
 ### Paging Controller
 
-To gluing paging component and paging state, a paging controller is needed. Controller expose some
+To integrate paging component and paging state, a paging controller is needed. Controller expose some
 functionality to modify `MtrPageState`.
 Paging controller emits the `MtrPageState`'value changed using `StateFlow`.
 
@@ -134,14 +132,14 @@ MtrPageController(
             MtrPageState(), 
             
             //set how next key is provided
-            setNextPageFunc = { currKey, pageSize, _ ->
-                (currKey ?: 1) + pageSize
+            setNextPageFunc = { currKey, lastPageSize ->
+                (currKey ?: 1) + lastPageSize
             }) {
                 //set how fetch page data 
-                pageKey, pageSize ->
+                pageKey ->
                 withContext(Dispatchers.IO) {
                     delay(3000)
-                    return@withContext getPaginatedData((pageKey ?: 1), pageSize).fold(
+                    return@withContext getPaginatedData((pageKey ?: 1)).fold(
                         onLeft = {
                             PageResult.Error("Failed to get pagin data")
                         }, onRight = {
@@ -154,28 +152,30 @@ MtrPageController(
 
 Below are the explanations of each constructor parameter of `MtrPageController`
 
-`state`: initial `MtrPageState` for this controller.
+- `state`: initial `MtrPageState` for this controller.
 
-`setNextPageFunc`: This function required by controller in order to set current page key to the next
+- `setNextPageFunc`: This function required by controller in order to set current page key to the next
 page key. Each pagination model has its own quirks on how to decide next page key, sometimes we only
 append it by 1, sometimes we use the offset that obtained by current size of loaded dataset.
 
-`loadPageFunc`: This function must be provided by result of fetching or loading a page data. Mostly,
+- `loadPageFunc`: This function must be provided by result of fetching or loading a page data. Mostly,
 you must transform the fetch result type to `PageResult<Error, List<Data>>` type.
 
 #### Modifying Page State
 
 To modify page state, `MtrPageController` provides these function.
 
-`loadPage`  : Suspend function to load page data with current `pageKey`. This function calls
+- `loadPage`  : Suspend function to load page data with current `pageKey`. This function calls
 function `loadPageFunc`
 that
 provided at controller constructor.
 
-`refreshPage`: Suspend function to refresh pagination and set `pageKey` to its initial
+- `refreshPage`: Suspend function to refresh pagination and set `pageKey` to its initial
 value (`null`). It will
 removes all
 loaded pages and reloads dataset from initial `pageKey`
+
+- `setEndOfPage`: Set end of paging. After this property set, no new paging can be loaded. 
 
 Then all MtrPageState changes will be emitted by `StateFlow`.
 
